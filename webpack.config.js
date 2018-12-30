@@ -1,6 +1,6 @@
 // import path from 'path';
 // import webpack from 'webpack';
-import path from 'path';
+const path = require('path');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
