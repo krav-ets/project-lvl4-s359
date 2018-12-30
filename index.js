@@ -1,5 +1,4 @@
 // @flow
-
 // import '@babel/polyfill';
 
 import path from 'path';
@@ -14,14 +13,30 @@ import session from 'koa-generic-session';
 import flash from 'koa-flash-simple';
 import _ from 'lodash';
 import methodOverride from 'koa-methodoverride';
+import Rollbar from 'rollbar';
 
 import webpackConfig from './webpack.config';
 import addRoutes from './routes';
 import container from './container';
 
+const rollbar = new Rollbar({
+  accessToken: process.env.POST_SERVER_ITEM_ACCESS_TOKEN,
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+});
+
 export default () => {
   const app = new Koa();
 
+  if (process.env.NODE_ENV === 'production') {
+    app.use(async (ctx, next) => {
+      try {
+        await next();
+      } catch (err) {
+        rollbar.error(err, ctx.request);
+      }
+    });
+  }
   app.keys = ['some secret hurr'];
   app.use(session(app));
   app.use(flash());
