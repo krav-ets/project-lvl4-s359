@@ -1,14 +1,14 @@
 import request from 'supertest';
-import matchers from 'jest-supertest-matchers';
+// import matchers from 'jest-supertest-matchers';
 
 import app from '..';
 
 describe('requests', () => {
   let server;
 
-  beforeAll(() => {
-    jasmine.addMatchers(matchers);
-  });
+  // beforeAll(() => {
+  //   expect.extend(matchers);
+  // });
 
   beforeEach(() => {
     server = app().listen();
@@ -17,13 +17,13 @@ describe('requests', () => {
   it('GET 200', async () => {
     const res = await request.agent(server)
       .get('/');
-    expect(res).toHaveHTTPStatus(200);
+    expect(res.status).toBe(200);
   });
 
   it('GET 404', async () => {
     const res = await request.agent(server)
       .get('/wrong-path');
-    expect(res).toHaveHTTPStatus(404);
+    expect(res.status).toBe(404);
   });
 
   afterEach((done) => {

@@ -40,9 +40,10 @@ export default () => {
     }
     return null;
   }));
-  app.use(serve(path.join(__dirname, '..', 'public')));
+  app.use(serve(path.join(__dirname, 'public')));
 
-  if (process.env.NODE_ENV !== 'production') {
+  container.logger(`NODE_ENV: ${process.env.NODE_ENV}`);
+  if (process.env.NODE_ENV === 'development') {
     koaWebpack({
       config: webpackConfig,
     }).then(m => app.use(m));

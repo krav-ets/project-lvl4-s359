@@ -35,10 +35,13 @@ compose-lint:
 	docker-compose run web npx eslint .
 
 start:
-	DEBUG="application:*" npx nodemon --watch .  --ext '.js' --exec npx gulp server
+	DEBUG='application:' npx nodemon --watch .  --ext '.js' --exec npx gulp server
 
-compose-check-types:
-	docker-compose run web npx flow
+test:
+	npm test
+
+lint:
+	npx eslint .
 
 compose-dist-build:
 	rm -rf dist
