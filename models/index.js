@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
-import container from '../container';
+// import container from '../container';
 import configJson from '../config/config.json';
 
 const basename = path.basename(__filename);
@@ -9,8 +9,8 @@ const env = process.env.NODE_ENV || 'development';
 const config = configJson[env];
 const db = {};
 
-container.logger(`ENV: ${env}`);
-container.logger(`Config: ${JSON.stringify(config)}`);
+// container.logger(`ENV: ${env}`);
+// container.logger(`Config: ${JSON.stringify(config)}`);
 
 let sequelize;
 if (config.use_env_variable) {

@@ -1,0 +1,11 @@
+extends /layouts/application.pug
+
+block content
+  +formFor(f, { url: urlFor('profile'), method: 'patch' })
+    +input(f, 'email', 'E-Mail')
+    +input(f, 'firstName', 'First Name')
+    +input(f, 'lastName', 'Last Name')
+    +input(f, 'password', 'Password', { as: 'password' })
+    +button('Save Changes')
+  +formFor(f, { url: urlFor('deleteUser'), method: 'delete' })
+    +button('Delete User', 'danger')

@@ -1,6 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import { encrypt } from '../lib/secure';
 import { User } from '../models'; //eslint-disable-line
+// import container from '../container';
 
 export default (router) => {
   router
@@ -15,16 +16,23 @@ export default (router) => {
           email,
         },
       });
+      const error = { errors: [] };
+      if (!user) {
+        error.errors.push({ path: 'email', message: 'The user is not found' });
+      }
       if (user && user.passwordDigest === encrypt(password)) {
         ctx.session.userId = user.id;
+        // container.logger(`user: ${JSON.stringify(user)}`);
+        ctx.flash.set('You are authorized');
         ctx.redirect(router.url('root'));
         return;
       }
-
-      ctx.flash.set('email or password were wrong');
-      ctx.render('sessions/new', { f: buildFormObj({ email }) });
+      // container.logger(`ERROR: ${JSON.stringify(error)}`);
+      error.errors.push({ path: 'password', message: 'Incorrect password' });
+      ctx.render('sessions/new', { f: buildFormObj({ email }, error) });
     })
-    .delete('session', '/session', (ctx) => {
+    .del('session', '/session', async (ctx) => {
+      // container.logger(`DEL_ctx: ${JSON.stringify(ctx)}`);
       ctx.session = {};
       ctx.redirect(router.url('root'));
     });
