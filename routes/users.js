@@ -1,4 +1,5 @@
 import buildFormObj from '../lib/formObjectBuilder';
+import { encrypt } from '../lib/secure';
 import { User } from '../models'; //eslint-disable-line
 // import container from '../container';
 
@@ -43,6 +44,35 @@ export default (router) => {
       } catch (e) {
         ctx.render('users/profile', { f: buildFormObj(user, e) });
       }
+    })
+    .get('changePassword', '/users/profile/change_password', async (ctx) => {
+      const { userId } = ctx.session;
+      const user = await User.findByPk(userId);
+      ctx.render('users/change_password', { f: buildFormObj(user) });
+    })
+    .patch('changePassword', '/users/profile/change_password', async (ctx) => {
+      const { userId } = ctx.session;
+      const { password, newPassword, confirmPassword } = ctx.request.body.form;
+      const user = await User.findByPk(userId);
+      const error = { errors: [] };
+      if (newPassword !== confirmPassword) {
+        error.errors.push({ path: 'confirmPassword', message: 'Passwords do not match' });
+        ctx.render('users/change_password', { f: buildFormObj({}, error) });
+        return;
+      }
+      if (user && user.passwordDigest === encrypt(password)) {
+        try {
+          await user.update({ password: newPassword });
+          ctx.flash.set('Password has been changed');
+          ctx.redirect(router.url('root'));
+          return;
+        } catch (e) {
+          ctx.render('users/change_password', { f: buildFormObj(user, e) });
+        }
+      } else {
+        error.errors.push({ path: 'password', message: 'Incorrect password' });
+      }
+      ctx.render('users/change_password', { f: buildFormObj({}, error) });
     })
     .delete('deleteUser', '/users', async (ctx) => {
       const { userId } = ctx.session;

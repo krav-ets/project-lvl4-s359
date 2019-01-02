@@ -16,11 +16,15 @@ html(lang="en")
             a.nav-link(href=urlFor('users')) Users
         ul.navbar-nav
           if isSignedIn()
-            li.nav-item
-                a.nav-link(href=urlFor('profile')) Edit Profile
-            li.nav-item
-            +formFor(f, { url: urlFor('session'), method: 'delete' })
-              button.btn.btn-outline-secondary(type="submit") Sign out
+            li.nav-item.dropdown
+              a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') User profile
+              .dropdown-menu.dropdown-menu-right(aria-labelledby='navbarDropdownMenuLink')
+                a.dropdown-item(href=urlFor('profile')) Edit profile
+                a.dropdown-item(href=urlFor('changePassword')) Change password
+                .dropdown-divider
+                a.dropdown-item
+                  +formFor(f, { url: urlFor('session'), method: 'delete' })
+                    button.btn.btn-light.btn-block(type="submit") Sign out
           else
             li.nav-item
               a.nav-link(href=urlFor('newSession')) Sign In

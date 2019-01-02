@@ -1,7 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import { encrypt } from '../lib/secure';
 import { User } from '../models'; //eslint-disable-line
-import container from '../container';
+// import container from '../container';
 
 export default (router) => {
   router
@@ -24,7 +24,7 @@ export default (router) => {
       }
       if (user && user.passwordDigest === encrypt(password)) {
         ctx.session.userId = user.id;
-        container.logger(`user: ${JSON.stringify(user)}`);
+        // container.logger(`user: ${JSON.stringify(user)}`);
         ctx.flash.set('You are authorized');
         ctx.redirect(router.url('root'));
         return;

@@ -1,11 +1,14 @@
 extends /layouts/application.pug
 
 block content
-  +formFor(f, { url: urlFor('profile'), method: 'patch' })
-    +input(f, 'email', 'E-Mail')
-    +input(f, 'firstName', 'First Name')
-    +input(f, 'lastName', 'Last Name')
-    +input(f, 'password', 'Password', { as: 'password' })
-    +button('Save Changes')
-  +formFor(f, { url: urlFor('deleteUser'), method: 'delete' })
-    +button('Delete User', 'danger')
+  .container
+    h1.text-center.my-5 User Profile
+    .row.justify-content-center.pb-5
+      .col-12.col-lg-4
+        +formFor(f, { url: urlFor('profile'), method: 'patch' })
+          +input(f, 'email', 'E-Mail', true)
+          +input(f, 'firstName', 'First Name', true)
+          +input(f, 'lastName', 'Last Name', true)
+          +button('Save Changes')
+        +formFor(f, { url: urlFor('deleteUser'), method: 'delete' })
+          +button('Delete User', 'danger')
