@@ -1,7 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import { encrypt } from '../lib/secure';
 import { User } from '../models'; //eslint-disable-line
-// import container from '../container';
+import container from '../container';
 
 export default (router) => {
   router
@@ -10,7 +10,9 @@ export default (router) => {
       ctx.render('sessions/new', { f: buildFormObj(data) });
     })
     .post('session', '/session', async (ctx) => {
+      // console.error(`CTX_rawBody ${JSON.stringify(ctx.request.body.form, ' ', 2)}`);
       const { email, password } = ctx.request.body.form;
+      // container.logger(`CTX: ${JSON.stringify(ctx.request.body, ' ', 2)}`);
       const user = await User.findOne({
         where: {
           email,
@@ -22,7 +24,7 @@ export default (router) => {
       }
       if (user && user.passwordDigest === encrypt(password)) {
         ctx.session.userId = user.id;
-        // container.logger(`user: ${JSON.stringify(user)}`);
+        container.logger(`user: ${JSON.stringify(user)}`);
         ctx.flash.set('You are authorized');
         ctx.redirect(router.url('root'));
         return;
