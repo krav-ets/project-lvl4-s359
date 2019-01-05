@@ -14,6 +14,8 @@ html(lang="en")
         ul.navbar-nav.mr-auto
           li.nav-item.active
             a.nav-link(href=urlFor('users')) Users
+          li.nav-item.active
+            a.nav-link(href=urlFor('newTask')) add task
         ul.navbar-nav
           if isSignedIn()
             li.nav-item.dropdown

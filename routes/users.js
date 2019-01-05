@@ -1,7 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import { encrypt } from '../lib/secure';
 import { User } from '../models'; //eslint-disable-line
-// import container from '../container';
+import container from '../container';
 
 export default (router) => {
   router
@@ -11,6 +11,7 @@ export default (router) => {
     })
     .get('newUser', '/users/new', (ctx) => {
       const user = User.build();
+      // container.logger(`USER: ${JSON.stringify(user)}`);
       ctx.render('users/new', { f: buildFormObj(user) });
     })
     .post('users', '/users', async (ctx) => {
@@ -30,13 +31,14 @@ export default (router) => {
     .get('profile', '/users/profile', async (ctx) => {
       const { userId } = ctx.session;
       const user = await User.findByPk(userId);
+      container.logger(`USER_PROFILE_OBJ: ${JSON.stringify({ f: buildFormObj(user) }, ' ', 2)}`);
       ctx.render('users/profile', { f: buildFormObj(user) });
     })
     .patch('profile', '/users/profile', async (ctx) => {
       const { userId } = ctx.session;
       const { request: { body: form } } = ctx;
       const user = await User.findByPk(userId);
-      // container.logger(`USER: ${JSON.stringify(user, ' ', 2)}`);
+      container.logger(`BODY: ${JSON.stringify(ctx.request.body, ' ', 2)}`);
       try {
         await user.update(form.form);
         ctx.flash.set('Profile has been edited');

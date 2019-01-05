@@ -7,5 +7,5 @@ block content
       .col-12.col-lg-4
         +formFor(f, { url: urlFor('session'), method: 'post' })
           +input(f, 'email', 'E-Mail')
-          +input(f, 'password', 'Password', false, { as: 'password' })
+          +input(f, 'password', 'Password', { as: 'password' })
           +button('Log In')

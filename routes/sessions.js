@@ -33,7 +33,7 @@ export default (router) => {
       error.errors.push({ path: 'password', message: 'Incorrect password' });
       ctx.render('sessions/new', { f: buildFormObj({ email }, error) });
     })
-    .del('session', '/session', async (ctx) => {
+    .delete('session', '/session', async (ctx) => {
       // container.logger(`DEL_ctx: ${JSON.stringify(ctx)}`);
       ctx.session = {};
       ctx.redirect(router.url('root'));

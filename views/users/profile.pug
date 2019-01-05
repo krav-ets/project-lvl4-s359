@@ -6,9 +6,9 @@ block content
     .row.justify-content-center.pb-5
       .col-12.col-lg-4
         +formFor(f, { url: urlFor('profile'), method: 'patch' })
-          +input(f, 'email', 'E-Mail', true)
-          +input(f, 'firstName', 'First Name', true)
-          +input(f, 'lastName', 'Last Name', true)
+          +input(f, 'email', 'E-Mail', {label: true, as: 'text'})
+          +input(f, 'firstName', 'First Name', {label: true, as: 'text'})
+          +input(f, 'lastName', 'Last Name', {label: true, as: 'text'})
           +button('Save Changes')
         +formFor(f, { url: urlFor('deleteUser'), method: 'delete' })
           +button('Delete User', 'danger')
