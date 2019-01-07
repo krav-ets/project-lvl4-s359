@@ -1,0 +1,17 @@
+extends /layouts/application.pug
+
+block content
+  table.table.table-stripped
+    thead
+      tr
+        th Name
+        th status
+        th creator
+        th assignedTo
+    tbody
+      each task in tasks
+        tr
+          td= task.name
+          td= task.Status.name
+          td= task.Creator.fullName
+          td= task.AssignedTo.fullName

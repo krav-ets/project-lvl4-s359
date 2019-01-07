@@ -2,6 +2,7 @@ import buildFormObj from '../lib/formObjectBuilder';
 import { encrypt } from '../lib/secure';
 import { User } from '../models'; //eslint-disable-line
 import container from '../container';
+import checkAuth from '../lib/checkAuth';
 
 export default (router) => {
   router
@@ -28,7 +29,7 @@ export default (router) => {
         ctx.render('users/new', { f: buildFormObj(user, e) });
       }
     })
-    .get('profile', '/users/profile', async (ctx) => {
+    .get('profile', '/users/profile', checkAuth, async (ctx) => {
       const { userId } = ctx.session;
       const user = await User.findByPk(userId);
       container.logger(`USER_PROFILE_OBJ: ${JSON.stringify({ f: buildFormObj(user) }, ' ', 2)}`);
@@ -47,7 +48,7 @@ export default (router) => {
         ctx.render('users/profile', { f: buildFormObj(user, e) });
       }
     })
-    .get('changePassword', '/users/profile/change_password', async (ctx) => {
+    .get('changePassword', '/users/profile/change_password', checkAuth, async (ctx) => {
       const { userId } = ctx.session;
       const user = await User.findByPk(userId);
       ctx.render('users/change_password', { f: buildFormObj(user) });
