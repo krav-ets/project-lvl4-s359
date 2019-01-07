@@ -10,17 +10,7 @@ block content
           +input(f, 'firstName', 'First Name', {label: true, as: 'text'})
           +input(f, 'lastName', 'Last Name', {label: true, as: 'text'})
           +button('Save Changes')
-        +formFor(f, { url: urlFor('deleteUser'), method: 'delete' })
-          button.btn.btn-danger.btn-block(type='button', data-toggle='modal', data-target='#deleteUserModal') Delete User
-          #deleteUserModal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
-            .modal-dialog(role='document')
-              .modal-content
-                .modal-header
-                  h5#exampleModalLabel.modal-title Warning
-                  button.close(type='button', data-dismiss='modal', aria-label='Close')
-                    span(aria-hidden='true') &times;
-                .modal-body Are you sure you want to delete the profile?
-                .modal-footer
-                  .form-group
-                    input(class=`btn btn-block btn-secondary` type=`button` value='Close' data-dismiss='modal')
-                  +button('Delete Profile', 'danger')
+        
+        a.btn.btn-danger.btn-block(href=urlFor('deleteUser') data-method='delete'
+        rel='nofollow' data-confirm='Are you sure you want to delete the profile?') Delete User
+         

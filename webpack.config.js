@@ -1,5 +1,6 @@
 // import path from 'path';
-// import webpack from 'webpack';
+import webpack from 'webpack';
+
 const path = require('path');
 
 module.exports = {
@@ -24,11 +25,11 @@ module.exports = {
     ],
   },
   plugins: [
-    // new webpack.ProvidePlugin({
-    //   $: 'jquery',
-    //   jQuery: 'jquery',
-    //   'window.jQuery': 'jquery',
-    //   Popper: ['popper.js', 'default'],
-    // }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery',
+      Popper: ['popper.js', 'default'],
+    }),
   ],
 };
