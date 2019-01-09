@@ -1,7 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import { encrypt } from '../lib/secure';
 import { User } from '../models'; //eslint-disable-line
-import container from '../container';
+// import container from '../container';
 import checkAuth from '../lib/checkAuth';
 
 export default (router) => {
@@ -12,34 +12,28 @@ export default (router) => {
     })
     .get('newUser', '/users/new', (ctx) => {
       const user = User.build();
-      // container.logger(`USER: ${JSON.stringify(user)}`);
       ctx.render('users/new', { f: buildFormObj(user) });
     })
     .post('users', '/users', async (ctx) => {
       const { request: { body: form } } = ctx;
       const user = User.build(form.form);
-      // container.logger(`FORM: ${JSON.stringify(form)}`);
-      // container.logger(`USER: ${JSON.stringify(user)}`);
       try {
         await user.save();
         ctx.flash.set('User has been created');
         ctx.redirect(router.url('root'));
       } catch (e) {
-        // container.logger(`ERR: ${JSON.stringify(e, ' ', 2)}`);
         ctx.render('users/new', { f: buildFormObj(user, e) });
       }
     })
     .get('profile', '/users/profile', checkAuth, async (ctx) => {
       const { userId } = ctx.session;
       const user = await User.findByPk(userId);
-      container.logger(`USER_PROFILE_OBJ: ${JSON.stringify({ f: buildFormObj(user) }, ' ', 2)}`);
       ctx.render('users/profile', { f: buildFormObj(user) });
     })
-    .patch('profile', '/users/profile', async (ctx) => {
+    .patch('profile', '/users/profile', checkAuth, async (ctx) => {
       const { userId } = ctx.session;
       const { request: { body: form } } = ctx;
       const user = await User.findByPk(userId);
-      container.logger(`BODY: ${JSON.stringify(ctx.request.body, ' ', 2)}`);
       try {
         await user.update(form.form);
         ctx.flash.set('Profile has been edited');
@@ -53,7 +47,7 @@ export default (router) => {
       const user = await User.findByPk(userId);
       ctx.render('users/change_password', { f: buildFormObj(user) });
     })
-    .patch('changePassword', '/users/profile/change_password', async (ctx) => {
+    .patch('changePassword', '/users/profile/change_password', checkAuth, async (ctx) => {
       const { userId } = ctx.session;
       const { password, newPassword, confirmPassword } = ctx.request.body.form;
       const user = await User.findByPk(userId);
@@ -77,17 +71,15 @@ export default (router) => {
       }
       ctx.render('users/change_password', { f: buildFormObj({}, error) });
     })
-    .delete('deleteUser', '/users', async (ctx) => {
+    .delete('deleteUser', '/users', checkAuth, async (ctx) => {
       const { userId } = ctx.session;
       const user = await User.findByPk(userId);
-      // container.logger(`USER_DEL: ${JSON.stringify(user, ' ', 2)}`);
       try {
         await user.destroy();
         ctx.flash.set('User was deleted');
         ctx.session = {};
         ctx.redirect(router.url('users'));
       } catch (e) {
-        // container.logger(`ERR: ${JSON.stringify(e, ' ', 2)}`);
         ctx.flash.set('The user is not deleted');
         ctx.redirect(router.url('profile'));
       }

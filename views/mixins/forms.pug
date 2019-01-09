@@ -19,6 +19,28 @@ mixin input(f, property, placeholder = property, options = { as: 'text', label: 
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
+mixin inputGroupUpdate(f, property, item)
+  - const value = f.object[property] === undefined ? '' : f.object[property]
+  - const isInvalid = f.errors[property] ? ' is-invalid' : ''
+  .input-group
+    input(name=getInputName(f, property) class=`form-control${isInvalid}` type='text' value=`${value}` placeholder=property)
+    .input-group-append
+      button.btn.btn-outline-secondary(type='submit') Update
+      a.btn.btn-outline-danger(href=urlFor('statuses', item.id) data-method='delete' rel='nofollow'
+            data-confirm='Are you sure you want to delete the status?') Del
+    if f.errors[property]
+      .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
+
+mixin inputGroupAdd(f, property, placeholder)
+  - const value = f.object[property] === undefined ? '' : f.object[property]
+  - const isInvalid = f.errors[property] ? ' is-invalid' : ''
+  .input-group
+    input(name=getInputName(f, property) class=`form-control${isInvalid}` type='text' value=`${value}` placeholder=placeholder)
+    .input-group-append
+      button.btn.btn-outline-success(type='submit') + Add status
+    if f.errors[property]
+      .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
+
 mixin button(value = 'Save', bClass = 'success' , type = 'submit')
   .form-group
     input(class=`btn btn-block btn-${bClass}` type=`${type}` value= value)
@@ -28,6 +50,15 @@ mixin select(f, property, placeholder = property, items)
   .form-group
     label= placeholder
     select(name=getInputName(f, property) class=`form-control`)
+      for item in items
+        - const name = item.name === undefined ? item.fullName : item.name
+        option(value=`${item.id}`)= name
+
+mixin selectDisabled(f, property, placeholder = property, items)
+  - const value = f.object[property] === undefined ? '' : f.object[property]
+  .form-group
+    label= placeholder
+    select(name=getInputName(f, property) class=`form-control` disabled)
       for item in items
         - const name = item.name === undefined ? item.fullName : item.name
         option(value=`${item.id}`)= name

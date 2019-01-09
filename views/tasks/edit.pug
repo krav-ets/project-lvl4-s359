@@ -2,13 +2,14 @@ extends /layouts/application.pug
 
 block content
   .container
-    h1.text-center.my-5 Add task
+    h1.text-center.my-5 Edit task
     .row.justify-content-center.pb-8
       .col-12.col-lg-6
-        +formFor(f, { url: urlFor('tasks'), method: 'post' })
+        +formFor(f, { url: urlFor('editTask', f.object.id), method: 'patch' })
           +input(f, 'name', 'Name')
           +input(f, 'description', 'Description')
-          +select(f, 'status', 'Status', defaultStatus)
+          +selectDisabled(f, 'creator', 'Creator', users)
+          +select(f, 'status', 'Status', taskStatuses)
           +select(f, 'assignedTo', 'Assigned to', users)
           +input(f, 'tags', 'Tags')
-          +button('Add task')
+          +button('Edit task')
