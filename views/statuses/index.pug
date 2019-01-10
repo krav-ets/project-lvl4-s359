@@ -4,11 +4,19 @@ block content
   .container
     h1.text-center.my-5 Statuses
     .row.justify-content-center.pb-5
-      .col-12.col-lg-4
-        for status in statuses
-          +formFor(f, { url: urlFor('editStatus', status.id), method: 'patch' })
-            +inputGroupUpdate(f, status.name, status)
+      .col-12.col-lg-3
+        each status in statuses
+          .input-group
+            input(class=`form-control-plaintext` type='text' value=`${status.name}` readonly)
+            .input-group-append
+              button.btn.btn-link.text-dark.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+              .dropdown-menu
+                a.dropdown-item(href=urlFor('editStatus', status.id)) Edit
+                a.dropdown-item(href=urlFor('editStatus', status.id) data-method='delete' 
+                rel='nofollow' data-confirm='Are you sure you want to delete the status?') Delete
+        br
         +formFor(f, { url: urlFor('addStatus'), method: 'post' })
-          +inputGroupAdd(f, newStatus, 'enter new status')
+          +input(f, 'name', 'enter new status')
+          +button('Add status')
 
         

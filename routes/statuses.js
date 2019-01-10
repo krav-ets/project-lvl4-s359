@@ -11,6 +11,11 @@ export default (router) => {
       container.logger(`STATUSES: ${JSON.stringify(statuses, ' ', 2)}`);
       ctx.render('statuses', { f: buildFormObj(status), statuses });
     })
+    .get('editStatus', '/statuses/:id/edit', checkAuth, async (ctx) => {
+      const status = await TaskStatus.findByPk(ctx.params.id);
+      container.logger(`STATUS: ${JSON.stringify(status, ' ', 2)}`);
+      ctx.render('statuses/edit', { f: buildFormObj(status) });
+    })
     .patch('editStatus', '/statuses/:id/edit', checkAuth, async (ctx) => {
       const { request: { body: form } } = ctx;
       container.logger(`EditStatFORM: ${JSON.stringify(form, ' ', 2)}`);
@@ -32,14 +37,14 @@ export default (router) => {
         status.save();
         container.logger(`StatADD: ${JSON.stringify(status, ' ', 2)}`);
         ctx.flash.set('Status has been created');
-        ctx.redirect(router.url('root'));
+        ctx.redirect(router.url('statuses'));
       } catch (e) {
         container.logger(`ErrADD: ${JSON.stringify(e, ' ', 2)}`);
         const statuses = await TaskStatus.findAll();
         ctx.render('statuses', { f: buildFormObj(status, e), statuses });
       }
     })
-    .delete('statuses', '/statuses/:id/edit', checkAuth, async (ctx) => {
+    .delete('editStatus', '/statuses/:id/edit', checkAuth, async (ctx) => {
       const status = await TaskStatus.findByPk(ctx.params.id);
       try {
         await status.destroy();

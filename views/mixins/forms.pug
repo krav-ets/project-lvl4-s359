@@ -19,6 +19,16 @@ mixin input(f, property, placeholder = property, options = { as: 'text', label: 
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
+mixin inputReadonly(f, item)
+  .input-group
+    input(name=getInputName(f, item.name) class=`form-control-plaintext` type='text' value=`${item.name}` readonly)
+    .input-group-append
+      button.btn.btn-outline-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+      .dropdown-menu
+        a.dropdown-item(href=urlFor('addStatus')) Edit status
+        a.dropdown-item(href=urlFor('statuses', item.id) data-method='delete'
+        rel='nofollow' data-confirm='Are you sure you want to delete the status?') Delete item.name
+        
 mixin inputGroupUpdate(f, property, item)
   - const value = f.object[property] === undefined ? '' : f.object[property]
   - const isInvalid = f.errors[property] ? ' is-invalid' : ''
@@ -26,8 +36,7 @@ mixin inputGroupUpdate(f, property, item)
     input(name=getInputName(f, property) class=`form-control${isInvalid}` type='text' value=`${value}` placeholder=property)
     .input-group-append
       button.btn.btn-outline-secondary(type='submit') Update
-      a.btn.btn-outline-danger(href=urlFor('statuses', item.id) data-method='delete' rel='nofollow'
-            data-confirm='Are you sure you want to delete the status?') Del
+      a.btn.btn-outline-danger(href=urlFor('statuses', item.id) data-method='delete' rel='nofollow' data-confirm='Are you sure you want to delete the status?') Del
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
