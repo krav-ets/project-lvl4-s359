@@ -63,7 +63,7 @@ export default (router) => {
       const tags = parseTags(form.form.tags);
       const task = await Task.build(form.form);
       try {
-        task.save();
+        await task.save();
         const arrTags = await findOrCreateTags(tags);
         await task.setTags(arrTags);
         ctx.flash.set('Task has been created');

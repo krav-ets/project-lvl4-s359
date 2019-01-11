@@ -34,7 +34,7 @@ export default (router) => {
       const status = await TaskStatus.build(form.form);
       container.logger(`AddStatForm: ${JSON.stringify(form, ' ', 2)}`);
       try {
-        status.save();
+        await status.save();
         container.logger(`StatADD: ${JSON.stringify(status, ' ', 2)}`);
         ctx.flash.set('Status has been created');
         ctx.redirect(router.url('statuses'));

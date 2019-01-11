@@ -8,3 +8,4 @@ block content
         +formFor(f, { url: urlFor('editStatus', f.object.id), method: 'patch' })
           +input(f, 'name', 'enter new status')
           +button('Save')
+          a.btn.btn-light.btn-block(href=urlFor('statuses')) Cancel
