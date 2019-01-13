@@ -1,7 +1,9 @@
+import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import { Task, User, TaskStatus, Tag } from '../models'; //eslint-disable-line
-// import container from '../container';
+import container from '../container';
 import checkAuth from '../lib/checkAuth';
+
 
 const parseTags = str => str.toLowerCase()
   .split('#')
@@ -15,17 +17,51 @@ const findOrCreateTags = async (tags) => {
   return result.map(a => a[0]);
 };
 
+const filterQuery = form => Object.keys(form)
+  .filter(key => form[key] !== '')
+  .reduce((acc, key) => ({ ...acc, [key]: form[key] }), {});
+
 const setDefaultStatus = (taskName, statuses) => statuses.filter(s => s.name === taskName);
 
 const convertTagsToString = tags => tags
   .map(tag => tag.name)
   .join(' ');
 
+const scopes = [
+  {
+    check: (key, value) => key === 'creator' && value === 'my',
+    func: (key, value, ctx) => ({ method: [key, ctx.session.userId] }),
+  },
+  {
+    check: (key, value) => value !== 'my',
+    func: (key, value) => ({ method: [key, value] }),
+  },
+];
+
+const buildQuery = (ctx) => {
+  const queryParams = filterQuery(ctx.request.query);
+  const getScopes = (key, value) => _.find(scopes, ({ check }) => check(key, value));
+
+  return Object.keys(queryParams).map((key) => {
+    const { func } = getScopes(key, queryParams[key]);
+    return func(key, queryParams[key], ctx);
+  });
+};
+
 export default (router) => {
   router
     .get('tasks', '/tasks', checkAuth, async (ctx) => {
+      const taskStatuses = await TaskStatus.findAll();
+      const users = await User.findAll();
+      container.logger(`CTX_query ${JSON.stringify(ctx.request.query, ' ', 2)}`);
+      if (Object.keys(ctx.request.query).length) {
+        const query = buildQuery(ctx);
+        const tasks = await Task.scope(...query).findAll({ include: ['Creator', 'AssignedTo', 'Status'] });
+        ctx.render('tasks', { tasks, users, taskStatuses });
+        return;
+      }
       const tasks = await Task.findAll({ include: ['Creator', 'AssignedTo', 'Status'] });
-      ctx.render('tasks', { tasks });
+      ctx.render('tasks', { tasks, users, taskStatuses });
     })
     .get('newTask', '/tasks/new', checkAuth, async (ctx) => {
       const taskStatuses = await TaskStatus.findAll();
@@ -67,7 +103,7 @@ export default (router) => {
         const arrTags = await findOrCreateTags(tags);
         await task.setTags(arrTags);
         ctx.flash.set('Task has been created');
-        ctx.redirect(router.url('root'));
+        ctx.redirect(router.url('tasks'));
       } catch (e) {
         const taskStatuses = await TaskStatus.findAll();
         const users = await User.findAll();

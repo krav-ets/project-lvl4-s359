@@ -89,6 +89,7 @@ describe('requests', () => {
       .post('/session')
       .type('form')
       .send({ form: { email: form.form.email, password: form.form.password } });
+    console.log(`RES: ${JSON.stringify(res2.headers, ' ', 2)}`);
     expect(res2.status).toBe(302);
   });
 

@@ -1,6 +1,34 @@
 extends /layouts/application.pug
 
 block content
+  p
+  a.btn.btn-light.btn-sm(href=urlFor('tasks',{query: { creator: 'my' }})) My Tasks
+  button.btn.btn-link.text-dark.btn-sm(type='button', data-toggle='collapse', data-target='#collapseFilters') + Filters
+  #collapseFilters.collapse
+    .card.card-body
+      +formFor({ url: urlFor('tasks') })
+        .form-row.align-items-center
+          .col-sm-3.my-1
+            label Creator
+            select(name='creator' class=`form-control`)
+              option(selected='')
+              for user in users
+                option(value=`${user.id}`)= user.fullName
+          .col-sm-3.my-1
+            label Status
+            select(name='status' class=`form-control`)
+              option(selected='')
+              for status in taskStatuses
+                option(value=`${status.id}`)= status.name
+          .col-sm-3.my-1
+            label Assigned to
+            select(name='assignedTo' class=`form-control`)
+              option(selected='')
+              for user in users
+                option(value=`${user.id}`)= user.fullName
+        +button('Apply', 'secondary')
+
+
   table.table.table-stripped
     thead
       tr
@@ -16,7 +44,8 @@ block content
           td= task.Creator.fullName
           td= task.AssignedTo.fullName
           td
-            a(href=urlFor('editTask', task.id)) Edit
-            br
-            a(href=urlFor('editTask', task.id) data-method='delete' rel='nofollow'
-            data-confirm='Are you sure you want to delete the task?') Delete
+            button.btn.btn-link.text-dark.dropdown-toggle(type='button', data-toggle='dropdown')
+            .dropdown-menu
+              a.dropdown-item(href=urlFor('editTask', task.id)) Edit
+              a.dropdown-item(href=urlFor('editTask', task.id) data-method='delete' 
+              rel='nofollow' data-confirm='Are you sure you want to delete the task?') Delete

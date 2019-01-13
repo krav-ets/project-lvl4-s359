@@ -26,7 +26,25 @@ export default (sequelize, DataTypes) => {
         notEmpty: { msg: 'Fill in the assignedTo' },
       },
     },
-  }, {});
+  }, {
+    scopes: {
+      creator: id => ({
+        where: {
+          creator: id,
+        },
+      }),
+      status: id => ({
+        where: {
+          status: id,
+        },
+      }),
+      assignedTo: id => ({
+        where: {
+          assignedTo: id,
+        },
+      }),
+    },
+  });
 
   Task.associate = (models) => {
     Task.belongsToMany(models.Tag, { through: 'TagTask' });
