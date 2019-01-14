@@ -8,25 +8,28 @@ block content
     .card.card-body
       +formFor({ url: urlFor('tasks') })
         .form-row.align-items-center
-          .col-sm-3.my-1
+          .col-sm-2.my-1
             label Creator
             select(name='creator' class=`form-control`)
               option(selected='')
               for user in users
                 option(value=`${user.id}`)= user.fullName
-          .col-sm-3.my-1
+          .col-sm-2.my-1
             label Status
             select(name='status' class=`form-control`)
               option(selected='')
               for status in taskStatuses
                 option(value=`${status.id}`)= status.name
-          .col-sm-3.my-1
+          .col-sm-2.my-1
             label Assigned to
             select(name='assignedTo' class=`form-control`)
               option(selected='')
               for user in users
                 option(value=`${user.id}`)= user.fullName
-        +button('Apply', 'secondary')
+          .col-sm-4.my-1
+            label Tags
+            input(name='tags' class='form-control' type='text' value='')     
+          +button('Apply', 'secondary')
 
 
   table.table.table-stripped

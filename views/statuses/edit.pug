@@ -7,5 +7,12 @@ block content
       .col-12.col-lg-3
         +formFor(f, { url: urlFor('editStatus', f.object.id), method: 'patch' })
           +input(f, 'name', 'enter new status')
+          .form-group.form-check
+            if f.object.default === 'on'
+              input.form-check-input(type='checkbox' name='form[default]' checked)
+              label.form-check-label Set as default
+            else
+              input.form-check-input(type='checkbox' name='form[default]')
+              label.form-check-label Set as default
           +button('Save')
           a.btn.btn-light.btn-block(href=urlFor('statuses')) Cancel

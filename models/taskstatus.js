@@ -7,6 +7,10 @@ export default (sequelize, DataTypes) => {
         notEmpty: { msg: 'Fill in the status name' },
       },
     },
+    default: {
+      type: DataTypes.STRING,
+      unique: { msg: 'Default status already set' },
+    },
   }, {});
   TaskStatus.associate = (models) => {
     TaskStatus.hasMany(models.Task, { foreignKey: 'status', sourceKey: 'id' });

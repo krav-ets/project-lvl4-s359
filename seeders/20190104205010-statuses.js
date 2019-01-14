@@ -3,6 +3,7 @@ module.exports = {
     {
       id: 1,
       name: 'new',
+      default: 'on',
       createdAt: new Date(),
       updatedAt: new Date(),
     },

@@ -1,4 +1,3 @@
-
 export default (sequelize, DataTypes) => {
   const Task = sequelize.define('Task', {
     name: {
@@ -51,6 +50,18 @@ export default (sequelize, DataTypes) => {
     Task.belongsTo(models.TaskStatus, { as: 'Status', foreignKey: 'status', targetKey: 'id' });
     Task.belongsTo(models.User, { as: 'Creator', foreignKey: 'creator', targetKey: 'id' });
     Task.belongsTo(models.User, { as: 'AssignedTo', foreignKey: 'assignedTo', targetKey: 'id' });
+    Task.addScope('tags', tags => ({
+      include: [
+        {
+          model: models.Tag,
+          where: {
+            name: {
+              [sequelize.Op.in]: tags,
+            },
+          },
+        },
+      ],
+    }));
   };
 
   return Task;

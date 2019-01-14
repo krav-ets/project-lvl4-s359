@@ -21,7 +21,7 @@ const filterQuery = form => Object.keys(form)
   .filter(key => form[key] !== '')
   .reduce((acc, key) => ({ ...acc, [key]: form[key] }), {});
 
-const setDefaultStatus = (taskName, statuses) => statuses.filter(s => s.name === taskName);
+const setDefaultStatus = statuses => statuses.filter(s => s.default === 'on');
 
 const convertTagsToString = tags => tags
   .map(tag => tag.name)
@@ -33,18 +33,31 @@ const scopes = [
     func: (key, value, ctx) => ({ method: [key, ctx.session.userId] }),
   },
   {
-    check: (key, value) => value !== 'my',
+    check: (key, value) => key === 'creator' && value !== 'my',
     func: (key, value) => ({ method: [key, value] }),
+  },
+  {
+    check: key => key === 'status',
+    func: (key, value) => ({ method: [key, value] }),
+  },
+  {
+    check: key => key === 'assignTo',
+    func: (key, value) => ({ method: [key, value] }),
+  },
+  {
+    check: key => key === 'tags',
+    func: (key, value) => ({ method: [key, parseTags(value)] }),
   },
 ];
 
-const buildQuery = (ctx) => {
-  const queryParams = filterQuery(ctx.request.query);
-  const getScopes = (key, value) => _.find(scopes, ({ check }) => check(key, value));
+const getScopes = (key, value) => _.find(scopes, ({ check }) => check(key, value));
 
-  return Object.keys(queryParams).map((key) => {
-    const { func } = getScopes(key, queryParams[key]);
-    return func(key, queryParams[key], ctx);
+const buildParams = (ctx) => {
+  const filteredQuery = filterQuery(ctx.request.query);
+  return Object.keys(filteredQuery).map((key) => {
+    const { func } = getScopes(key, filteredQuery[key]);
+    const result = func(key, filteredQuery[key], ctx);
+    return result;
   });
 };
 
@@ -55,7 +68,7 @@ export default (router) => {
       const users = await User.findAll();
       container.logger(`CTX_query ${JSON.stringify(ctx.request.query, ' ', 2)}`);
       if (Object.keys(ctx.request.query).length) {
-        const query = buildQuery(ctx);
+        const query = buildParams(ctx);
         const tasks = await Task.scope(...query).findAll({ include: ['Creator', 'AssignedTo', 'Status'] });
         ctx.render('tasks', { tasks, users, taskStatuses });
         return;
@@ -65,7 +78,7 @@ export default (router) => {
     })
     .get('newTask', '/tasks/new', checkAuth, async (ctx) => {
       const taskStatuses = await TaskStatus.findAll();
-      const defaultStatus = setDefaultStatus('new', taskStatuses);
+      const defaultStatus = setDefaultStatus(taskStatuses);
       const users = await User.findAll();
       const task = Task.build();
       ctx.render('tasks/new', { f: buildFormObj(task), defaultStatus, users });
