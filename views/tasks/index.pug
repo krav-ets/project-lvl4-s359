@@ -8,7 +8,7 @@ block content
     .card.card-body
       +formFor({ url: urlFor('tasks') })
         .form-row.align-items-center
-          .col-sm-2.my-1
+          .col-sm-3.my-1
             label Creator
             select(name='creator' class=`form-control`)
               option(selected='')
@@ -20,7 +20,7 @@ block content
               option(selected='')
               for status in taskStatuses
                 option(value=`${status.id}`)= status.name
-          .col-sm-2.my-1
+          .col-sm-3.my-1
             label Assigned to
             select(name='assignedTo' class=`form-control`)
               option(selected='')
@@ -29,8 +29,8 @@ block content
           .col-sm-4.my-1
             label Tags
             input(name='tags' class='form-control' type='text' value='')     
-          +button('Apply', 'secondary')
-
+        .form-group
+          input(class=`btn btn-secondary` type=`submit` value= 'Apply')
 
   table.table.table-stripped
     thead
