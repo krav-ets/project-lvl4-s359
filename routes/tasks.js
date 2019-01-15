@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import { Task, User, TaskStatus, Tag } from '../models'; //eslint-disable-line
-import container from '../container';
+// import container from '../container';
 import checkAuth from '../lib/checkAuth';
 
 
