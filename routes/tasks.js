@@ -41,7 +41,7 @@ const scopes = [
     func: (key, value) => ({ method: [key, value] }),
   },
   {
-    check: key => key === 'assignTo',
+    check: key => key === 'assignedTo',
     func: (key, value) => ({ method: [key, value] }),
   },
   {
@@ -66,7 +66,6 @@ export default (router) => {
     .get('tasks', '/tasks', checkAuth, async (ctx) => {
       const taskStatuses = await TaskStatus.findAll();
       const users = await User.findAll();
-      container.logger(`CTX_query ${JSON.stringify(ctx.request.query, ' ', 2)}`);
       if (Object.keys(ctx.request.query).length) {
         const query = buildParams(ctx);
         const tasks = await Task.scope(...query).findAll({ include: ['Creator', 'AssignedTo', 'Status'] });
