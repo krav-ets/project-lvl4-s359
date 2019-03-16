@@ -4,26 +4,22 @@ import { User, TaskStatus } from '../models'; //eslint-disable-line
 // import matchers from 'jest-supertest-matchers';
 import app from '..';
 
-const formGenerate = () => ({
-  form: {
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-  },
-});
-
 let server;
-const userForm = formGenerate();
-const authForm = { form: { email: userForm.form.email, password: userForm.form.password } };
+const user = {
+  firstName: faker.name.firstName(),
+  lastName: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+};
+const authForm = { form: { email: user.email, password: user.password } };
+const taskStatus = { name: faker.random.word() };
 let cookie;
-const statusForm = { form: { name: faker.random.word() } };
 
 describe('requests', () => {
   beforeEach(async () => {
     await User.sync({ force: true });
     await TaskStatus.sync({ force: true });
-    await User.create(userForm.form);
+    await User.create(user);
     server = app().listen();
     const authRes = await request.agent(server)
       .post('/session')
@@ -43,11 +39,11 @@ describe('requests', () => {
     const res = await request.agent(server)
       .post('/statuses')
       .set('Cookie', cookie)
-      .send(statusForm);
+      .send({ form: taskStatus });
     expect(res.status).toBe(302);
 
-    const status = await TaskStatus.findOne({ where: { name: statusForm.form.name } });
-    expect(status.name).toBe(statusForm.form.name);
+    const status = await TaskStatus.findOne({ where: { name: taskStatus.name } });
+    expect(status.name).toBe(taskStatus.name);
 
     const patchRes = await request.agent(server)
       .patch(`/statuses/${status.id}/edit`)
@@ -63,11 +59,11 @@ describe('requests', () => {
     const res = await request.agent(server)
       .post('/statuses')
       .set('Cookie', cookie)
-      .send(statusForm);
+      .send({ form: taskStatus });
     expect(res.status).toBe(302);
 
-    const status = await TaskStatus.findOne({ where: { name: statusForm.form.name } });
-    expect(status.name).toBe(statusForm.form.name);
+    const status = await TaskStatus.findOne({ where: { name: taskStatus.name } });
+    expect(status.name).toBe(taskStatus.name);
 
     const delRes = await request.agent(server)
       .delete(`/statuses/${status.id}/edit`)
